@@ -1,3 +1,5 @@
+import json
+
 from django.test import RequestFactory
 from django.urls import reverse
 import pytest
@@ -19,13 +21,26 @@ class TestView:
         response = PollView.as_view()(request)
         assert response.status_code == 201
 
-    def test_get_success_poll(self):
-        path = reverse('polls', kwargs={'pk': 1})
+    def test_get_specific_success_poll(self):
+        path = reverse('polls')
         request = RequestFactory().post(path, {'name': 'abc', 'stars': 5, 'views': 3}, content_type='application/json')
         PollView.as_view()(request)
+        path = reverse('polls', kwargs={'pk': 1})
         request = RequestFactory().get(path)
         response = PollView.as_view()(request, pk=1)
         assert response.status_code == 200
+
+    def test_get_all_success_poll(self):
+        path = reverse('polls')
+        request = RequestFactory().post(path, {'name': 'abc', 'stars': 5, 'views': 3}, content_type='application/json')
+        PollView.as_view()(request)
+        path = reverse('polls')
+        request = RequestFactory().post(path, {'name': 'cdv', 'stars': 3, 'views': 20}, content_type='application/json')
+        PollView.as_view()(request)
+        path = reverse('polls')
+        request = RequestFactory().get(path)
+        response = PollView.as_view()(request)
+        assert response.status_code == 200 and len(json.loads(response.content)) == 2
 
     def test_put_success_poll(self):
         path = reverse('polls')

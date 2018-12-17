@@ -38,7 +38,7 @@ class RestWrapper(View):
         response = json.loads(serializers.serialize('json', queryset))
         response = [res['fields'] for res in response]
         if len(response) > 0:
-            return HttpResponse(response, status=200)
+            return HttpResponse(json.dumps(response), status=200)
         else:
             return HttpResponse('Not Found', status=404)
 
