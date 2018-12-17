@@ -24,6 +24,8 @@ class RestWrapper(View):
             queryset = queryset.filter(pk=pk)[:1]
         else:
             limit = None
+            if len(dict(request.GET).items()) == 0:
+                queryset = queryset.all()
             for attr, val in dict(request.GET).items():
                 if attr == 'limit':
                     limit = int(val[0])
